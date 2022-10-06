@@ -14,7 +14,7 @@ Content-Type: application/json
 ### update fruit
 PUT http://localhost:3000
 Content-Type: application/json
-
+ 
 {"name": "cherry"}
 
 ### delete fruit
