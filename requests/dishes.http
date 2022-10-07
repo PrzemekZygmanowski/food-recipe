@@ -21,4 +21,4 @@ Content-Type: application/json
   }
 
 ### [D]elete dish
-DELETE http://localhost:3000/dishes/10
+DELETE http://localhost:3000/dishes/1
