@@ -1,18 +1,25 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { DishService } from 'src/dishes/dish.service';
 import { CreateProductDTO } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './Products';
 
 @Injectable()
 export class ProductService {
-  trackId = 1;
-  products: Product[] = [];
+  private trackId = 1;
+  private products: Product[] = [];
+  private dishService?: DishService;
+
+  constructor(dishService: DishService) {
+    this.dishService = dishService;
+  }
 
   create(product: CreateProductDTO): Product {
     const newProduct: Product = {
       id: this.trackId++,
       ...product,
     };
+    this.dishService.getOneById(product.dishId);
     this.products.push(newProduct);
     return newProduct;
   }
