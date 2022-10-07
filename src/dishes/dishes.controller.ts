@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -27,7 +29,7 @@ export class DishesController {
     const newDish: Dish = {
       id: this.trackId,
       ...dish,
-    }
+    };
     this.dishes.push(newDish);
     return dish;
   }
@@ -42,12 +44,22 @@ export class DishesController {
     const dishToUpdate = this.dishes.find(
       (d: Dish) => d.id === Number(dish.id),
     );
-    if (dishToUpdate) Object.assign(dishToUpdate, dish);
+    if (!dishToUpdate) {
+      throw new NotFoundException('Dish not found');
+    } else {
+      Object.assign(dishToUpdate, dish);
+    }
     return dishToUpdate;
   }
 
   @Delete(':id')
   deleteOne(@Param('id') dishId: string) {
+    const dishToRemove = this.dishes.find((d: Dish) => d.id === Number(dishId));
+    console.log(dishToRemove);
+
+    if (!dishToRemove) {
+      throw new NotFoundException('dish not found');
+    }
     this.dishes = this.dishes.filter((d: Dish) => d.id !== Number(dishId));
     return { dishId };
   }

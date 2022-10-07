@@ -8,7 +8,7 @@ export class UpdateDishDTO {
     id: number;
     @IsString()
     name: string;
-    @IsNumber()
+    @IsNumber({}, { message: 'Servings must be provided' })
     servings: number;
     @IsString()
     @IsOptional()
