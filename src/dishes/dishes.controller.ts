@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpException,
-  NotFoundException,
-  Param,
-  Post,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, NotFoundException, Param, Post, Put } from '@nestjs/common';
 import { Dish } from './Dish';
 import { UpdateDishDTO } from './dto/update-dish.dto';
 import { CreateDishDTO } from './dto/create-dish.dto';
@@ -27,7 +17,7 @@ export class DishesController {
   @Post('')
   createOne(@Body() dish: CreateDishDTO) {
     const newDish: Dish = {
-      id: this.trackId,
+      id: this.trackId++,
       ...dish,
     };
     this.dishes.push(newDish);
@@ -41,9 +31,7 @@ export class DishesController {
 
   @Put()
   updateOne(@Body() dish: UpdateDishDTO) {
-    const dishToUpdate = this.dishes.find(
-      (d: Dish) => d.id === Number(dish.id),
-    );
+    const dishToUpdate = this.dishes.find((d: Dish) => d.id === Number(dish.id));
     if (!dishToUpdate) {
       throw new NotFoundException('Dish not found');
     } else {
