@@ -6,61 +6,37 @@ import { UpdateDishDTO } from './dto/update-dish.dto';
 
 @Injectable()
 export class DishService {
-  private trackId = 1;
-  private dishes: Dish[] = [
-    {
-      id: this.trackId++,
-      name: 'Overnight Oats',
-      servings: 2,
-      description: 'Yummy breakfast',
-      products: [],
-    },
-  ];
-
   constructor(private productService: ProductService) {}
 
-  create(dish: CreateDishDTO): Dish {
-    const newDish: Dish = {
-      id: this.trackId++,
-      products: [],
-      ...dish,
-    };
-    this.dishes.push(newDish);
+  create(dish: CreateDishDTO): Promise<Dish> {
+    const newDish = new Dish();
+    Object.assign(newDish, dish);
 
-    return newDish;
+    return newDish.save();
   }
 
-  read(): readonly Dish[] {
-    return this.dishes.map((d: Dish) => {
-      return {
-        ...d,
-        products: this.productService.getAllForDishId(d.id),
-      };
-    });
+  read(): Promise<Dish[]> {
+    return Dish.find();
   }
 
-  getOneById(id: number) {
-    const dish = this.dishes.find((d: Dish) => d.id === id);
+  async getOneById(id: number): Promise<Dish> {
+    const dish = await Dish.findOne({ where: { id: id } });
     if (!dish) {
       throw new NotFoundException('Dish not found');
     }
-    dish.products = this.productService.getAllForDishId(id);
-    return {
-      ...dish,
-      products: this.productService.getAllForDishId(id),
-    };
+    return dish;
   }
 
-  update(dish: UpdateDishDTO): Dish {
-    const dishToUpdate = this.getOneById(dish.id);
+  async update(dish: UpdateDishDTO): Promise<Dish> {
+    const dishToUpdate = await this.getOneById(dish.id);
     Object.assign(dishToUpdate, dish);
 
-    return dishToUpdate;
+    return dishToUpdate.save();
   }
 
-  delete(dishId: number) {
-    this.getOneById(dishId);
-    this.dishes = this.dishes.filter((d: Dish) => d.id !== Number(dishId));
-    return { dishId };
+  async delete(dishId: number): Promise<Dish> {
+    const dishToRemove = await this.getOneById(dishId);
+
+    return dishToRemove.remove();
   }
 }

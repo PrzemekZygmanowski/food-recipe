@@ -6,52 +6,46 @@ import { Product } from './Products';
 
 @Injectable()
 export class ProductService {
-  private trackId = 1;
-  private products: Product[] = [{ id: this.trackId++, name: 'Oats', amount: 100, unit: 'g', dishId: 1 }];
   private dishService: DishService;
 
   constructor(@Inject(forwardRef(() => DishService)) dishService: DishService) {
     this.dishService = dishService;
   }
 
-  create(product: CreateProductDTO): Product {
-    const newProduct: Product = {
-      id: this.trackId++,
-      ...product,
-    };
-    this.dishService.getOneById(product.dishId);
-    this.products.push(newProduct);
-    return newProduct;
+  create(product: CreateProductDTO): Promise<Product> {
+    const newProduct = new Product();
+    Object.assign(newProduct, product);
+    return newProduct.save();
   }
 
-  read(): readonly Product[] {
-    return this.products;
+  read(): Promise<Product[]> {
+    return Product.find();
   }
 
-  getAllForDishId(dishId: number): Product[] {
-    return this.products.filter((p: Product) => p.dishId === dishId);
-  }
+  // getAllForDishId(dishId: number): Product[] {
+  //   return this.products.filter((p: Product) => p.dishId === dishId);
+  // }
 
-  getOneById(id: number) {
-    const product = this.products.find((p: Product) => p.id === id);
+  async getOneById(productId: number): Promise<Product> {
+    const product = await Product.findOne({ where: { id: productId } });
     if (!product) {
       throw new NotFoundException('Product not found');
     }
     return product;
   }
 
-  update(product: UpdateProductDto): Product {
+  async update(product: UpdateProductDto): Promise<Product> {
     // eslint-disable-next-line prettier/prettier
-    const productToUpdate = this.getOneById(product.id);
+    const productToUpdate = await this.getOneById(product.id);
     Object.assign(productToUpdate, product);
 
-    return productToUpdate;
+    return productToUpdate.save();
   }
 
-  delete(productId: number) {
+  async delete(productId: number): Promise<Product> {
     this.getOneById(productId);
-    // eslint-disable-next-line prettier/prettier
-    this.products = this.products.filter((p: Product) => p.id !== productId);
-    return { productId };
+    const productToRemove = await this.getOneById(productId);
+
+    return productToRemove.remove();
   }
 }
