@@ -1,27 +1,25 @@
 import { Injectable, NotFoundException, forwardRef, Inject } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { DishService } from '../dishes/dish.service';
 import { CreateProductDTO } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from './Products';
+import { Product } from './product.entity';
 
 @Injectable()
 export class ProductService {
-  private dishService: DishService;
-
-  constructor(@Inject(forwardRef(() => DishService)) dishService: DishService) {
-    this.dishService = dishService;
-  }
+  constructor(private dishService: DishService, @InjectRepository(Product) private productRepository: Repository<Product>) {}
 
   async create(product: CreateProductDTO): Promise<Product> {
-    const newProduct = new Product();
-    Object.assign(newProduct, product);
-    const dish = await this.dishService.getOneById(product.dishId);
-    newProduct.dish = dish;
-    return newProduct.save();
+    // const newProduct = new Product();
+    // Object.assign(newProduct, product);
+    const newProduct = this.productRepository.create(product);
+    newProduct.dish = await this.dishService.getOneById(product.dishId);
+    return this.productRepository.save(newProduct);
   }
 
   read(): Promise<Product[]> {
-    return Product.find();
+    return this.productRepository.find();
   }
 
   // getAllForDishId(dishId: number): Product[] {
@@ -29,25 +27,22 @@ export class ProductService {
   // }
 
   async getOneById(productId: number): Promise<Product> {
-    const product = await Product.findOne({ where: { id: productId } });
+    const product = await this.productRepository.findOne({ where: { id: productId } });
     if (!product) {
       throw new NotFoundException('Product not found');
     }
     return product;
   }
 
-  async update(product: UpdateProductDto): Promise<Product> {
-    // eslint-disable-next-line prettier/prettier
-    const productToUpdate = await this.getOneById(product.id);
-    Object.assign(productToUpdate, product);
+  async update(product: UpdateProductDto) {
+    await this.getOneById(product.id);
 
-    return productToUpdate.save();
+    return this.productRepository.update(product.id, product);
   }
 
   async delete(productId: number): Promise<Product> {
-    this.getOneById(productId);
     const productToRemove = await this.getOneById(productId);
 
-    return productToRemove.remove();
+    return this.productRepository.remove(productToRemove);
   }
 }

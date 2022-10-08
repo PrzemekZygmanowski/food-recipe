@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, OneToMany } from 'typeorm';
-import { Product } from '../products/Products';
+import { Product } from '../products/product.entity';
 
 /* eslint-disable prettier/prettier */
 @Entity()

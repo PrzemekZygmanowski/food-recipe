@@ -18,10 +18,10 @@ PUT http://localhost:3000/dishes
 Content-Type: application/json
 
 {
-    "id":1,
+    "id":3,
   "name": "jablko",
   "servings": 10
   }
 
 ### [D]elete dish
-DELETE http://localhost:3000/dishes/1
+DELETE http://localhost:3000/dishes/2

@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, ManyToOne } from 'typeorm';
-import { Dish } from '../dishes/Dish';
+import { Dish } from '../dishes/dish.entity';
 
 /* eslint-disable prettier/prettier */
 @Entity()
