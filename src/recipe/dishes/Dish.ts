@@ -1,4 +1,4 @@
-import { Product } from 'src/products/Products';
+import { Product } from '../products/Products';
 
 /* eslint-disable prettier/prettier */
 export interface Dish {

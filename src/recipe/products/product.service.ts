@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, forwardRef, Inject } from '@nestjs/common';
-import { DishService } from 'src/dishes/dish.service';
+import { DishService } from '../dishes/dish.service';
 import { CreateProductDTO } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './Products';

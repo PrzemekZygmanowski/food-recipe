@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
-import { Dish } from './Dish';
 import { UpdateDishDTO } from './dto/update-dish.dto';
 import { CreateDishDTO } from './dto/create-dish.dto';
 import { DishService } from './dish.service';
