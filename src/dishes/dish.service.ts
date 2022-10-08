@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { ProductService } from 'src/products/product.service';
 import { Dish } from './Dish';
 import { CreateDishDTO } from './dto/create-dish.dto';
 import { UpdateDishDTO } from './dto/update-dish.dto';
@@ -9,15 +10,19 @@ export class DishService {
   private dishes: Dish[] = [
     {
       id: this.trackId++,
-      name: 'overnight oats',
+      name: 'Overnight Oats',
       servings: 2,
-      description: 'yummy breakfast',
+      description: 'Yummy breakfast',
+      products: [],
     },
   ];
+
+  constructor(private productService: ProductService) {}
 
   create(dish: CreateDishDTO): Dish {
     const newDish: Dish = {
       id: this.trackId++,
+      products: [],
       ...dish,
     };
     this.dishes.push(newDish);
@@ -26,7 +31,12 @@ export class DishService {
   }
 
   read(): readonly Dish[] {
-    return this.dishes;
+    return this.dishes.map((d: Dish) => {
+      return {
+        ...d,
+        products: this.productService.getAllForDishId(d.id),
+      };
+    });
   }
 
   getOneById(id: number) {
@@ -34,7 +44,11 @@ export class DishService {
     if (!dish) {
       throw new NotFoundException('Dish not found');
     }
-    return dish;
+    dish.products = this.productService.getAllForDishId(id);
+    return {
+      ...dish,
+      products: this.productService.getAllForDishId(id),
+    };
   }
 
   update(dish: UpdateDishDTO): Dish {
