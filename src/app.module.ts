@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RecipeModule } from './recipe/recipe.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { RecipeModule } from './recipe/recipe.module';
       autoLoadEntities: true,
       synchronize: true, //not for production
     }),
+    UserModule,
   ],
   controllers: [AppController],
   providers: [],

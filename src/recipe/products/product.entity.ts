@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, ManyToOne } from 'typeorm';
-import { Dish } from '../dishes/dish.entity';
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, ManyToOne, OneToMany } from 'typeorm';
+import { Ingredient } from '../ingredients/ingredient.entity';
 
 /* eslint-disable prettier/prettier */
 @Entity()
@@ -13,9 +13,6 @@ export class Product extends BaseEntity {
   @Column({ type: 'varchar' })
   unit: 'kg' | 'g' | 'tsp' | 'sp' | 'pinch' | 'ml' | 'l' | 'item';
 
-  @Column({ type: 'decimal' })
-  amount: number;
-
-  @ManyToOne(() => Dish, (dish: Dish) => dish.products, { onDelete: 'CASCADE' })
-  dish: Dish;
+  @OneToMany(() => Ingredient, (ingredient: Ingredient) => ingredient.product, { onDelete: 'CASCADE' })
+  ingredients: Ingredient[];
 }
