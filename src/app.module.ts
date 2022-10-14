@@ -7,8 +7,12 @@ import { RecipeModule } from './recipe/recipe.module';
   imports: [
     RecipeModule,
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: './database/my-db.sqlite3',
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'Przemek',
+      password: '',
+      database: 'nestJS',
       autoLoadEntities: true,
       synchronize: true, //not for production
     }),
